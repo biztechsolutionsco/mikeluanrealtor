@@ -26,7 +26,8 @@ export default {
             return new Response(JSON.stringify(data, null, 2), {
                 status: 200,
                 headers: {
-                    "Content-Type": "application/json; charset=UTF-8"
+                    "Content-Type": "application/json; charset=UTF-8",
+                    "Access-Control-Allow-Origin": "*"
                 }
             });
         }
