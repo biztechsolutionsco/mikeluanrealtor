@@ -1,0 +1,271 @@
+<head>
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/base.css">
+</head>
+<!-- ======================================================
+     HOME EVALUATION FORM
+====================================================== -->
+
+<div id="site-header"></div>
+
+<div class="form-component home-evaluation-form">
+
+    <div class="form-component-heading">
+
+        <p class="section-eyebrow">
+            Property Details
+        </p>
+
+        <h2>
+            Request a Home Evaluation
+        </h2>
+
+        <p>
+            Tell Mike a little about your property and your plans.
+            He'll follow up to discuss your home and the next steps.
+        </p>
+
+    </div>
+
+
+    <form class="form-grid" data-home-evaluation-form-element>
+
+        <div class="form-field">
+
+            <label for="valuation-first-name">
+                First Name
+            </label>
+
+            <input
+                type="text"
+                id="valuation-first-name"
+                name="first_name"
+                autocomplete="given-name"
+                required
+            >
+
+        </div>
+
+
+        <div class="form-field">
+
+            <label for="valuation-last-name">
+                Last Name
+            </label>
+
+            <input
+                type="text"
+                id="valuation-last-name"
+                name="last_name"
+                autocomplete="family-name"
+                required
+            >
+
+        </div>
+
+
+        <div class="form-field">
+
+            <label for="valuation-email">
+                Email
+            </label>
+
+            <input
+                type="email"
+                id="valuation-email"
+                name="email"
+                autocomplete="email"
+                required
+            >
+
+        </div>
+
+
+        <div class="form-field">
+
+            <label for="valuation-phone">
+                Phone
+            </label>
+
+            <input
+                type="tel"
+                id="valuation-phone"
+                name="phone"
+                autocomplete="tel"
+            >
+
+        </div>
+
+
+        <div class="form-field form-field--full">
+
+            <label for="valuation-address">
+                Property Address
+            </label>
+
+            <input
+                type="text"
+                id="valuation-address"
+                name="property_address"
+                autocomplete="street-address"
+                required
+            >
+
+        </div>
+
+
+        <div class="form-field">
+
+            <label for="valuation-property-type">
+                Property Type
+            </label>
+
+            <select
+                id="valuation-property-type"
+                name="property_type"
+            >
+                <option value="">
+                    Select
+                </option>
+
+                <option value="detached">
+                    Detached
+                </option>
+
+                <option value="semi-detached">
+                    Semi-Detached
+                </option>
+
+                <option value="townhouse">
+                    Townhouse
+                </option>
+
+                <option value="condo">
+                    Condominium
+                </option>
+
+                <option value="other">
+                    Other
+                </option>
+            </select>
+
+        </div>
+
+
+        <div class="form-field">
+
+            <label for="valuation-timeline">
+                Selling Timeline
+            </label>
+
+            <select
+                id="valuation-timeline"
+                name="selling_timeline"
+            >
+                <option value="">
+                    Select
+                </option>
+
+                <option value="immediately">
+                    As Soon as Possible
+                </option>
+
+                <option value="1-3-months">
+                    Within 1–3 Months
+                </option>
+
+                <option value="3-6-months">
+                    Within 3–6 Months
+                </option>
+
+                <option value="6-plus-months">
+                    More Than 6 Months
+                </option>
+
+                <option value="exploring">
+                    Just Exploring
+                </option>
+            </select>
+
+        </div>
+
+
+        <div class="form-field">
+
+            <label for="valuation-bedrooms">
+                Bedrooms
+            </label>
+
+            <input
+                type="number"
+                id="valuation-bedrooms"
+                name="bedrooms"
+                min="0"
+            >
+
+        </div>
+
+
+        <div class="form-field">
+
+            <label for="valuation-bathrooms">
+                Bathrooms
+            </label>
+
+            <input
+                type="number"
+                id="valuation-bathrooms"
+                name="bathrooms"
+                min="0"
+                step="0.5"
+            >
+
+        </div>
+
+
+        <div class="form-field form-field--full">
+
+            <label for="valuation-notes">
+                Additional Details
+            </label>
+
+            <textarea
+                id="valuation-notes"
+                name="notes"
+                rows="5"
+                placeholder="Tell Mike anything else that may be helpful."
+            ></textarea>
+
+        </div>
+
+
+        <input
+            type="hidden"
+            name="form_source"
+            value="home_evaluation"
+        >
+
+
+        <div class="form-actions form-field--full">
+
+            <button
+                type="submit"
+                class="button button-primary"
+            >
+                Request My Home Evaluation
+            </button>
+
+        </div>
+
+
+        <div
+            class="form-message form-field--full"
+            data-form-message
+            aria-live="polite"
+        ></div>
+
+    </form>
+
+</div>
+
+<script src="../js/main.js"></script>

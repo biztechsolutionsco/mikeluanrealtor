@@ -1,0 +1,193 @@
+<!-- ======================================================
+     FULL PROPERTY SEARCH
+====================================================== -->
+
+<div class="property-search-full">
+
+    <!-- SEARCH / FILTER BAR -->
+
+    <div class="property-search-full-toolbar">
+
+        <div class="property-search-full-location">
+
+            <label for="property-search-location">
+                Location
+            </label>
+
+            <input
+                type="text"
+                id="property-search-location"
+                placeholder="City, neighbourhood or address"
+                autocomplete="off"
+            >
+
+        </div>
+
+
+        <div class="property-search-full-filter">
+
+            <label for="property-search-price">
+                Price
+            </label>
+
+            <select id="property-search-price">
+                <option value="">Any Price</option>
+                <option value="500000">Up to $500K</option>
+                <option value="750000">Up to $750K</option>
+                <option value="1000000">Up to $1M</option>
+                <option value="1500000">Up to $1.5M</option>
+                <option value="2000000">Up to $2M</option>
+                <option value="2000001">$2M+</option>
+            </select>
+
+        </div>
+
+
+        <div class="property-search-full-filter">
+
+            <label for="property-search-type">
+                Property Type
+            </label>
+
+            <select id="property-search-type">
+                <option value="">Any Type</option>
+                <option value="detached">Detached</option>
+                <option value="semi-detached">Semi-Detached</option>
+                <option value="townhouse">Townhouse</option>
+                <option value="condo">Condo</option>
+            </select>
+
+        </div>
+
+
+        <div class="property-search-full-filter">
+
+            <label for="property-search-beds">
+                Bedrooms
+            </label>
+
+            <select id="property-search-beds">
+                <option value="">Any Beds</option>
+                <option value="1">1+</option>
+                <option value="2">2+</option>
+                <option value="3">3+</option>
+                <option value="4">4+</option>
+                <option value="5">5+</option>
+            </select>
+
+        </div>
+
+
+        <div class="property-search-full-actions">
+
+            <button
+                type="button"
+                class="button button-primary"
+                data-full-property-search-button
+            >
+                Search
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- MOBILE VIEW TOGGLE -->
+
+    <div class="property-search-view-toggle">
+
+        <button
+            type="button"
+            class="is-active"
+            data-property-view="list"
+        >
+            Listings
+        </button>
+
+        <button
+            type="button"
+            data-property-view="map"
+        >
+            Map
+        </button>
+
+    </div>
+
+
+    <!-- RESULTS + MAP -->
+
+    <div class="property-search-full-layout">
+
+        <!-- RESULTS -->
+
+        <div
+            class="property-search-full-results"
+            data-property-results-panel
+        >
+
+            <div class="property-results-header">
+
+                <div>
+
+                    <p class="section-eyebrow">
+                        Properties
+                    </p>
+
+                    <h2>
+                        Homes for Sale
+                    </h2>
+
+                </div>
+
+                <div
+                    class="property-results-count"
+                    data-property-results-count
+                >
+                    0 properties
+                </div>
+
+            </div>
+
+
+            <div
+                class="property-results-list"
+                data-property-results-list
+            >
+
+                <div class="property-results-empty">
+
+                    <h3>
+                        Start Your Search
+                    </h3>
+
+                    <p>
+                        Search by city, neighbourhood or address to explore
+                        available properties.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- MAP -->
+
+        <div
+            class="property-search-full-map-wrap"
+            data-property-map-panel
+        >
+
+            <div
+                id="property-search-map"
+                class="property-search-full-map"
+                aria-label="Ontario property search map"
+            ></div>
+
+        </div>
+
+    </div>
+
+</div>

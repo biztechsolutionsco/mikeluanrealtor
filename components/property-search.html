@@ -1,0 +1,231 @@
+<section class="property-search-component">
+
+    <div class="property-search-heading">
+
+        <p class="section-eyebrow">
+            Find Your Next Home
+        </p>
+
+        <h2>
+            Search Properties
+        </h2>
+
+    </div>
+
+
+    <form
+        class="property-search-form"
+        action="/listings/"
+        method="get"
+    >
+
+        <!-- LOCATION -->
+
+        <div class="property-search-field">
+
+            <label for="property-search-location">
+                Location
+            </label>
+
+            <input
+                type="text"
+                id="property-search-location"
+                name="location"
+                placeholder="City or neighbourhood"
+            >
+
+        </div>
+
+
+        <!-- MINIMUM PRICE -->
+
+        <div class="property-search-field">
+
+            <label for="property-search-min-price">
+                Minimum Price
+            </label>
+
+            <select
+                id="property-search-min-price"
+                name="min-price"
+            >
+
+                <option value="">
+                    No Minimum
+                </option>
+
+                <option value="500000">
+                    $500,000
+                </option>
+
+                <option value="750000">
+                    $750,000
+                </option>
+
+                <option value="1000000">
+                    $1,000,000
+                </option>
+
+                <option value="1250000">
+                    $1,250,000
+                </option>
+
+                <option value="1500000">
+                    $1,500,000
+                </option>
+
+                <option value="2000000">
+                    $2,000,000
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <!-- MAXIMUM PRICE -->
+
+        <div class="property-search-field">
+
+            <label for="property-search-max-price">
+                Maximum Price
+            </label>
+
+            <select
+                id="property-search-max-price"
+                name="max-price"
+            >
+
+                <option value="">
+                    No Maximum
+                </option>
+
+                <option value="750000">
+                    $750,000
+                </option>
+
+                <option value="1000000">
+                    $1,000,000
+                </option>
+
+                <option value="1250000">
+                    $1,250,000
+                </option>
+
+                <option value="1500000">
+                    $1,500,000
+                </option>
+
+                <option value="2000000">
+                    $2,000,000
+                </option>
+
+                <option value="3000000">
+                    $3,000,000
+                </option>
+
+                <option value="5000000">
+                    $5,000,000+
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <!-- BEDROOMS -->
+
+        <div class="property-search-field">
+
+            <label for="property-search-beds">
+                Bedrooms
+            </label>
+
+            <select
+                id="property-search-beds"
+                name="beds"
+            >
+
+                <option value="">
+                    Any
+                </option>
+
+                <option value="1">
+                    1+
+                </option>
+
+                <option value="2">
+                    2+
+                </option>
+
+                <option value="3">
+                    3+
+                </option>
+
+                <option value="4">
+                    4+
+                </option>
+
+                <option value="5">
+                    5+
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <!-- PROPERTY TYPE -->
+
+        <div class="property-search-field">
+
+            <label for="property-search-type">
+                Property Type
+            </label>
+
+            <select
+                id="property-search-type"
+                name="property-type"
+            >
+
+                <option value="">
+                    Any Type
+                </option>
+
+                <option value="detached">
+                    Detached
+                </option>
+
+                <option value="semi-detached">
+                    Semi-Detached
+                </option>
+
+                <option value="townhouse">
+                    Townhouse
+                </option>
+
+                <option value="condo">
+                    Condo
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <!-- SEARCH -->
+
+        <div class="property-search-submit">
+
+            <button
+                type="submit"
+                class="button button-primary"
+            >
+                Search Homes
+            </button>
+
+        </div>
+
+    </form>
+
+</section>

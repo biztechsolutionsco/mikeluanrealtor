@@ -1,0 +1,224 @@
+/* ======================================================
+   RESET / GLOBAL
+====================================================== */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    padding-top: 94px;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #222;
+    background: #fff;
+}
+
+img {
+    display: block;
+    max-width: 100%;
+}
+
+.container {
+    width: min(1180px, calc(100% - 48px));
+    margin: 0 auto;
+}
+
+main {
+    overflow: hidden;
+}
+
+section {
+    position: relative;
+}
+
+.section-surface-muted {
+    background: #f5f5f2;
+}
+
+/* ======================================================
+   GLOBAL FOCUS
+====================================================== */
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: 2px solid #222;
+    outline-offset: 3px;
+}
+
+/* ======================================================
+   SHARED TYPOGRAPHY
+====================================================== */
+
+.section-eyebrow,
+.home-hero-eyebrow {
+    margin: 0 0 12px;
+    color: #777;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.section-heading {
+    margin-bottom: 38px;
+}
+
+.section-heading h2 {
+    margin: 0;
+    font-size: clamp(2rem, 3vw, 2.8rem);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.025em;
+}
+
+.section-heading-center {
+    max-width: 720px;
+    margin-right: auto;
+    margin-bottom: 42px;
+    margin-left: auto;
+    text-align: center;
+}
+
+.section-heading-split {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 30px;
+}
+
+.section-description {
+    max-width: 650px;
+    margin: 18px auto 0;
+    color: #666;
+    font-size: 0.96rem;
+    line-height: 1.7;
+}
+
+.section-link {
+    color: #222;
+    font-size: 0.84rem;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.section-link:hover,
+.section-link:focus-visible {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+/* ======================================================
+   BUTTONS
+====================================================== */
+
+.button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 13px 22px;
+    border: 1px solid transparent;
+    font-family: inherit;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.055em;
+    text-decoration: none;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.button:hover {
+    transform: translateY(-1px);
+}
+
+.button-primary {
+    background: #171717;
+    border-color: #171717;
+    color: #fff;
+}
+
+.button-primary:hover {
+    background: #333;
+    border-color: #333;
+}
+
+.button-secondary {
+    background: transparent;
+    border-color: #252525;
+    color: #252525;
+}
+
+.button-secondary:hover {
+    background: #252525;
+    color: #fff;
+}
+
+.button-outline {
+    background: transparent;
+    border-color: #222;
+    color: #222;
+}
+
+.button-outline:hover {
+    background: #222;
+    color: #fff;
+}
+
+.button-light {
+    background: #fff;
+    border-color: #fff;
+    color: #171717;
+}
+
+.button-light:hover {
+    background: transparent;
+    color: #fff;
+}
+
+/* ======================================================
+   SHARED RESPONSIVE
+====================================================== */
+
+@media (max-width: 980px) {
+    body {
+        padding-top: 78px;
+    }
+}
+
+@media (max-width: 600px) {
+    .section-heading-split {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+@media (max-width: 560px) {
+    .container {
+        width: min(100% - 30px, 1180px);
+    }
+}
+
+/* ======================================================
+   REDUCED MOTION
+====================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+}
