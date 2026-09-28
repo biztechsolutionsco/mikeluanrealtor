@@ -661,3 +661,61 @@ document.addEventListener(
 
     }
 );
+
+/* ======================================================
+   CONTACT FORM SUBMISSION
+====================================================== */
+
+const contactForm = document.querySelector("[data-contact-form]");
+
+if (contactForm) {
+    contactForm.addEventListener("submit", async (event) => {
+
+        event.preventDefault();
+
+        const formMessage = contactForm.querySelector(
+            "[data-form-message]"
+        );
+
+        try {
+
+            const formData = new FormData(contactForm);
+
+            const response = await fetch(
+                contactForm.action,
+                {
+                    method: "POST",
+                    body: formData
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error(
+                    `Submission failed: ${response.status}`
+                );
+            }
+
+            formMessage.textContent =
+                "Thank you. Your message has been submitted.";
+
+            formMessage.classList.remove("is-error");
+            formMessage.classList.add("is-success");
+
+            contactForm.reset();
+
+        } catch (error) {
+
+            console.error(
+                "Contact form submission error:",
+                error
+            );
+
+            formMessage.textContent =
+                "Something went wrong. Please try again.";
+
+            formMessage.classList.remove("is-success");
+            formMessage.classList.add("is-error");
+        }
+
+    });
+}
