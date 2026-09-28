@@ -167,17 +167,6 @@ the Mike Luan real estate website.
                 recipient
             );
 
-
-            if (data.email) {
-
-                message.setHeader(
-                    "Reply-To",
-                    data.email
-                );
-
-            }
-
-
             message.setSubject(
                 subject
             );
