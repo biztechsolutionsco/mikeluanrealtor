@@ -37,7 +37,67 @@ async function loadHomeEvaluationForm() {
         const html = await response.text();
 
         containers.forEach((container) => {
+
             container.innerHTML = html;
+
+            const form = container.querySelector(
+                "[data-home-evaluation-form-element]"
+            );
+
+            if (!form) {
+                return;
+            }
+
+            form.addEventListener("submit", async (event) => {
+
+                event.preventDefault();
+
+                const formMessage = form.querySelector(
+                    "[data-form-message]"
+                );
+
+                try {
+
+                    const formData = new FormData(form);
+
+                    const response = await fetch(
+                        form.action,
+                        {
+                            method: "POST",
+                            body: formData
+                        }
+                    );
+
+                    if (!response.ok) {
+                        throw new Error(
+                            `Submission failed: ${response.status}`
+                        );
+                    }
+
+                    formMessage.textContent =
+                        "Thank you. Your home evaluation request has been submitted.";
+
+                    formMessage.classList.remove("is-error");
+                    formMessage.classList.add("is-success");
+
+                    form.reset();
+
+                } catch (error) {
+
+                    console.error(
+                        "Home evaluation submission error:",
+                        error
+                    );
+
+                    formMessage.textContent =
+                        "Something went wrong. Please try again.";
+
+                    formMessage.classList.remove("is-success");
+                    formMessage.classList.add("is-error");
+                }
+
+            });
+
         });
 
     } catch (error) {
