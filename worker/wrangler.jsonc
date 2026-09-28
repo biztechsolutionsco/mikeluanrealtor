@@ -2,18 +2,15 @@
   "name": "mikeluanrealtor",
   "main": "src/index.js",
   "compatibility_date": "2026-09-28",
+
   "send_email": [
     {
       "name": "EMAIL",
       "destination_address": "biztechsolutionsco@gmail.com"
     }
-  ]
-}
+  ],
 
-{
-  // ...
   "observability": {
-    "enabled": false
-  },
-  // ...
+    "enabled": true
+  }
 }
