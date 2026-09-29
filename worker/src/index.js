@@ -137,6 +137,191 @@ async function verifyTurnstile(
 
 }
 
+/* ======================================================
+   FORM VALIDATION
+====================================================== */
+
+const VALID_FORM_SOURCES =
+    new Set([
+        "contact",
+        "home_evaluation"
+    ]);
+
+
+const VALID_INTERESTS =
+    new Set([
+        "",
+        "buying",
+        "selling",
+        "home-evaluation",
+        "community",
+        "general"
+    ]);
+
+
+const VALID_CONTACT_TIMELINES =
+    new Set([
+        "",
+        "asap",
+        "1-3-months",
+        "3-6-months",
+        "6-plus-months",
+        "exploring"
+    ]);
+
+
+const VALID_PROPERTY_TYPES =
+    new Set([
+        "",
+        "detached",
+        "semi-detached",
+        "townhouse",
+        "condo",
+        "other"
+    ]);
+
+
+const VALID_SELLING_TIMELINES =
+    new Set([
+        "",
+        "immediately",
+        "1-3-months",
+        "3-6-months",
+        "6-plus-months",
+        "exploring"
+    ]);
+
+
+/* ======================================================
+   NORMALIZE TEXT
+====================================================== */
+
+function cleanText(
+    value,
+    maxLength = 1000
+) {
+
+    if (
+        value === null ||
+        value === undefined
+    ) {
+        return "";
+    }
+
+
+    return String(value)
+        .trim()
+        .slice(0, maxLength);
+
+}
+
+
+/* ======================================================
+   EMAIL VALIDATION
+====================================================== */
+
+function isValidEmail(email) {
+
+    if (
+        !email ||
+        email.length > 254
+    ) {
+        return false;
+    }
+
+
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
+        email
+    );
+
+}
+
+
+/* ======================================================
+   NUMBER VALIDATION
+====================================================== */
+
+function isValidNumber(
+    value,
+    {
+        min = 0,
+        max = 100,
+        step = null
+    } = {}
+) {
+
+    if (
+        value === ""
+    ) {
+        return true;
+    }
+
+
+    const number =
+        Number(value);
+
+
+    if (
+        !Number.isFinite(number) ||
+        number < min ||
+        number > max
+    ) {
+        return false;
+    }
+
+
+    if (
+        step !== null
+    ) {
+
+        const remainder =
+            Math.abs(
+                number / step -
+                Math.round(number / step)
+            );
+
+
+        if (
+            remainder > 0.000001
+        ) {
+            return false;
+        }
+
+    }
+
+
+    return true;
+
+}
+
+
+/* ======================================================
+   VALIDATION ERROR RESPONSE
+====================================================== */
+
+function validationError(
+    message,
+    origin
+) {
+
+    return new Response(
+        JSON.stringify({
+            success: false,
+            message
+        }),
+        {
+            status: 400,
+
+            headers: {
+                "Content-Type":
+                    "application/json; charset=UTF-8",
+
+                ...getCorsHeaders(origin)
+            }
+        }
+    );
+
+}
 
 /* ======================================================
    WORKER
@@ -205,53 +390,101 @@ export default {
             const data = {
 
                 form_source:
-                    formData.get("form_source"),
+                    cleanText(
+                        formData.get("form_source"),
+                        50
+                    ),
 
                 first_name:
-                    formData.get("first_name"),
+                    cleanText(
+                        formData.get("first_name"),
+                        100
+                    ),
 
                 last_name:
-                    formData.get("last_name"),
+                    cleanText(
+                        formData.get("last_name"),
+                        100
+                    ),
 
                 email:
-                    formData.get("email"),
+                    cleanText(
+                        formData.get("email"),
+                        254
+                    ).toLowerCase(),
 
                 phone:
-                    formData.get("phone"),
+                    cleanText(
+                        formData.get("phone"),
+                        50
+                    ),
 
                 interest:
-                    formData.get("interest"),
+                    cleanText(
+                        formData.get("interest"),
+                        50
+                    ),
 
                 timeline:
-                    formData.get("timeline"),
+                    cleanText(
+                        formData.get("timeline"),
+                        50
+                    ),
 
                 message:
-                    formData.get("message"),
+                    cleanText(
+                        formData.get("message"),
+                        3000
+                    ),
 
                 property_address:
-                    formData.get("property_address"),
+                    cleanText(
+                        formData.get("property_address"),
+                        300
+                    ),
 
                 property_type:
-                    formData.get("property_type"),
+                    cleanText(
+                        formData.get("property_type"),
+                        50
+                    ),
 
                 selling_timeline:
-                    formData.get("selling_timeline"),
+                    cleanText(
+                        formData.get("selling_timeline"),
+                        50
+                    ),
 
                 bedrooms:
-                    formData.get("bedrooms"),
+                    cleanText(
+                        formData.get("bedrooms"),
+                        10
+                    ),
 
                 bathrooms:
-                    formData.get("bathrooms"),
+                    cleanText(
+                        formData.get("bathrooms"),
+                        10
+                    ),
 
                 notes:
-                    formData.get("notes"),
+                    cleanText(
+                        formData.get("notes"),
+                        3000
+                    ),
 
                 website:
-                    formData.get("website"),
+                    cleanText(
+                        formData.get("website"),
+                        500
+                    ),
 
                 turnstile_token:
-                    formData.get(
-                        "cf-turnstile-response"
+                    cleanText(
+                        formData.get(
+                            "cf-turnstile-response"
+                        ),
+                        3000
                     )
             };
 
@@ -425,6 +658,178 @@ export default {
                         }
                     }
                 );
+
+            }
+
+            /* ======================================================
+            FORM DATA VALIDATION
+            ====================================================== */
+
+            if (
+                !VALID_FORM_SOURCES.has(
+                    data.form_source
+                )
+            ) {
+
+                return validationError(
+                    "Invalid form submission.",
+                    origin
+                );
+
+            }
+
+
+            if (
+                !data.first_name ||
+                !data.last_name
+            ) {
+
+                return validationError(
+                    "First name and last name are required.",
+                    origin
+                );
+
+            }
+
+
+            if (
+                !isValidEmail(
+                    data.email
+                )
+            ) {
+
+                return validationError(
+                    "Please enter a valid email address.",
+                    origin
+                );
+
+            }
+
+
+            /* ======================================================
+            CONTACT FORM VALIDATION
+            ====================================================== */
+
+            if (
+                data.form_source ===
+                "contact"
+            ) {
+
+                if (
+                    !VALID_INTERESTS.has(
+                        data.interest
+                    )
+                ) {
+
+                    return validationError(
+                        "Invalid interest selection.",
+                        origin
+                    );
+
+                }
+
+
+                if (
+                    !VALID_CONTACT_TIMELINES.has(
+                        data.timeline
+                    )
+                ) {
+
+                    return validationError(
+                        "Invalid timeline selection.",
+                        origin
+                    );
+
+                }
+
+            }
+
+
+            /* ======================================================
+            HOME EVALUATION VALIDATION
+            ====================================================== */
+
+            if (
+                data.form_source ===
+                "home_evaluation"
+            ) {
+
+                if (
+                    !data.property_address
+                ) {
+
+                    return validationError(
+                        "Property address is required.",
+                        origin
+                    );
+
+                }
+
+
+                if (
+                    !VALID_PROPERTY_TYPES.has(
+                        data.property_type
+                    )
+                ) {
+
+                    return validationError(
+                        "Invalid property type.",
+                        origin
+                    );
+
+                }
+
+
+                if (
+                    !VALID_SELLING_TIMELINES.has(
+                        data.selling_timeline
+                    )
+                ) {
+
+                    return validationError(
+                        "Invalid selling timeline.",
+                        origin
+                    );
+
+                }
+
+
+                if (
+                    !isValidNumber(
+                        data.bedrooms,
+                        {
+                            min: 0,
+                            max: 20,
+                            step: 1
+                        }
+                    )
+                ) {
+
+                    return validationError(
+                        "Bedrooms must be a whole number between 0 and 20.",
+                        origin
+                    );
+
+                }
+
+
+                if (
+                    !isValidNumber(
+                        data.bathrooms,
+                        {
+                            min: 0,
+                            max: 20,
+                            step: 0.5
+                        }
+                    )
+                ) {
+
+                    return validationError(
+                        "Bathrooms must be between 0 and 20 in 0.5 increments.",
+                        origin
+                    );
+
+                }
 
             }
 
