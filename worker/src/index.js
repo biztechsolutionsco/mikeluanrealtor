@@ -1,6 +1,64 @@
+const ALLOWED_ORIGINS = new Set([
+    "https://biztechsolutionsco.github.io"
+]);
+
+
+function getCorsHeaders(origin) {
+
+    if (
+        !origin ||
+        !ALLOWED_ORIGINS.has(origin)
+    ) {
+        return {};
+    }
+
+    return {
+        "Access-Control-Allow-Origin": origin,
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type",
+        "Access-Control-Max-Age": "86400",
+        "Vary": "Origin"
+    };
+
+}
+
 export default {
 
     async fetch(request, env) {
+
+        const origin =
+            request.headers.get("Origin") || "";
+
+
+        if (
+            origin &&
+            !ALLOWED_ORIGINS.has(origin)
+        ) {
+
+            return new Response(
+                "Forbidden",
+                {
+                    status: 403
+                }
+            );
+
+        }
+
+
+        if (
+            request.method === "OPTIONS"
+        ) {
+
+            return new Response(
+                null,
+                {
+                    status: 204,
+                    headers:
+                        getCorsHeaders(origin)
+                }
+            );
+
+        }
 
         if (request.method === "POST") {
 
@@ -153,7 +211,7 @@ Contact Form
             ) {
 
                 console.error(
-                    "Brevo email configuration is missing.",
+                    "Brevo email configuration is missing."
                 );
 
 
@@ -170,8 +228,7 @@ Contact Form
                             "Content-Type":
                                 "application/json; charset=UTF-8",
 
-                            "Access-Control-Allow-Origin":
-                                "*"
+                            ...getCorsHeaders(origin)
                         }
                     }
                 );
@@ -258,8 +315,7 @@ Contact Form
                             "Content-Type":
                                 "application/json; charset=UTF-8",
 
-                            "Access-Control-Allow-Origin":
-                                "*"
+                            ...getCorsHeaders(origin)
                         }
                     }
                 );
@@ -278,8 +334,7 @@ Contact Form
                         "Content-Type":
                             "application/json; charset=UTF-8",
 
-                        "Access-Control-Allow-Origin":
-                            "*"
+                        ...getCorsHeaders(origin)
                     }
                 }
             );
