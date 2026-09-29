@@ -60,10 +60,17 @@ async function loadHomeEvaluationForm() {
                             body: formData
                         }
                     );
+                    const result =
+                        await response.json();
+
+
                     if (!response.ok) {
+
                         throw new Error(
-                            `Submission failed: ${response.status}`
+                            result.message ||
+                            "Something went wrong. Please try again."
                         );
+
                     }
                     formMessage.textContent =
                         "Thank you. Your home evaluation request has been submitted.";
@@ -76,6 +83,7 @@ async function loadHomeEvaluationForm() {
                         error
                     );
                     formMessage.textContent =
+                        error.message ||
                         "Something went wrong. Please try again.";
                     formMessage.classList.remove("is-success");
                     formMessage.classList.add("is-error");
