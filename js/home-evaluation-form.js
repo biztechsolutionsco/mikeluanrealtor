@@ -31,6 +31,15 @@ async function loadHomeEvaluationForm() {
         const html = await response.text();
         containers.forEach((container) => {
             container.innerHTML = html;
+            if (
+                window.renderTurnstileWidgets
+            ) {
+
+                window.renderTurnstileWidgets(
+                    container
+                );
+
+            }
             const form = container.querySelector(
                 "[data-home-evaluation-form-element]"
             );
