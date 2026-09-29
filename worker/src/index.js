@@ -1,82 +1,24 @@
-import { EmailMessage } from "cloudflare:email";
-import { createMimeMessage } from "mimetext";
-
-
-const sender =
-    "website@addplusimmigration.ca";
-
-const recipient =
+const senderEmail =
     "biztechsolutionsco@gmail.com";
 
-
-export default {
-
-    async fetch(request, env) {
-
-        if (request.method === "POST") {
-
-            const formData =
-                await request.formData();
-
-            const data = {
-                form_source:
-                    formData.get("form_source"),
-
-                first_name:
-                    formData.get("first_name"),
-
-                last_name:
-                    formData.get("last_name"),
-
-                email:
-                    formData.get("email"),
-
-                phone:
-                    formData.get("phone"),
-
-                interest:
-                    formData.get("interest"),
-
-                timeline:
-                    formData.get("timeline"),
-
-                message:
-                    formData.get("message"),
-
-                property_address:
-                    formData.get("property_address"),
-
-                property_type:
-                    formData.get("property_type"),
-
-                selling_timeline:
-                    formData.get("selling_timeline"),
-
-                bedrooms:
-                    formData.get("bedrooms"),
-
-                bathrooms:
-                    formData.get("bathrooms"),
-
-                notes:
-                    formData.get("notes")
-            };
+const recipientEmail =
+    env.INQUIRY_NOTIFICATION_EMAIL;
 
 
-            const fullName =
-                `${data.first_name || ""} ${data.last_name || ""}`.trim();
+const fullName =
+    `${data.first_name || ""} ${data.last_name || ""}`.trim();
 
 
-            let subject;
-            let body;
+let subject;
+let body;
 
 
-            if (data.form_source === "home_evaluation") {
+if (data.form_source === "home_evaluation") {
 
-                subject =
-                    `New Home Evaluation Request - ${fullName}`;
+    subject =
+        `New Home Evaluation Request - ${fullName}`;
 
-                body = `
+    body = `
 New home evaluation request
 
 Name:
@@ -108,19 +50,14 @@ ${data.notes || "Not provided"}
 
 Submitted from:
 Home Evaluation Form
+    `.trim();
 
-----------------------------------------
+} else {
 
-This email was automatically generated from
-the Mike Luan real estate website.
-                `.trim();
+    subject =
+        `New Website Contact Inquiry - ${fullName}`;
 
-            } else {
-
-                subject =
-                    `New Website Contact Inquiry - ${fullName}`;
-
-                body = `
+    body = `
 New website contact inquiry
 
 Name:
@@ -143,53 +80,91 @@ ${data.message || "Not provided"}
 
 Submitted from:
 Contact Form
+    `.trim();
 
-----------------------------------------
+}
 
-This email was automatically generated from
-the Mike Luan real estate website.
-                `.trim();
 
+const brevoResponse =
+    await fetch(
+        "https://api.brevo.com/v3/smtp/email",
+        {
+            method: "POST",
+
+            headers: {
+                "accept":
+                    "application/json",
+
+                "api-key":
+                    env.BREVO_API_KEY,
+
+                "content-type":
+                    "application/json"
+            },
+
+            body:
+                JSON.stringify({
+                    sender: {
+                        name:
+                            "Mike Luan Website",
+
+                        email:
+                            senderEmail
+                    },
+
+                    to: [
+                        {
+                            email:
+                                recipientEmail
+                        }
+                    ],
+
+                    replyTo: {
+                        email:
+                            data.email,
+
+                        name:
+                            fullName
+                    },
+
+                    subject:
+                        subject,
+
+                    textContent:
+                        body
+                })
+        }
+    );
+
+
+if (!brevoResponse.ok) {
+
+    const errorBody =
+        await brevoResponse.text();
+
+    console.error(
+        "Brevo email failed:",
+        brevoResponse.status,
+        errorBody
+    );
+
+    return new Response(
+        JSON.stringify({
+            success: false
+        }),
+        {
+            status: 500,
+            headers: {
+                "Content-Type":
+                    "application/json; charset=UTF-8",
+
+                "Access-Control-Allow-Origin":
+                    "*"
             }
+        }
+    );
 
-
-            const message =
-                createMimeMessage();
-
-
-            message.setSender({
-                name: "Mike Luan Website",
-                addr: sender
-            });
-
-
-            message.setRecipient(
-                recipient
-            );
-
-            message.setSubject(
-                subject
-            );
-
-
-            message.addMessage({
-                contentType: "text/plain",
-                data: body
-            });
-
-
-            const email =
-                new EmailMessage(
-                    sender,
-                    recipient,
-                    message.asRaw()
-                );
-
-
-            await env.EMAIL.send(
-                email
-            );
-
+}
 
             return new Response(
                 JSON.stringify({
