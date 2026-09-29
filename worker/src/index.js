@@ -323,6 +323,94 @@ function validationError(
 
 }
 
+async function saveInquiry(
+    data,
+    env
+) {
+
+    const result =
+        await env.DB.prepare(`
+            INSERT INTO inquiries (
+                form_source,
+                first_name,
+                last_name,
+                email,
+                phone,
+                interest,
+                timeline,
+                message,
+                property_address,
+                property_type,
+                selling_timeline,
+                bedrooms,
+                bathrooms,
+                notes,
+                status,
+                email_sent
+            )
+            VALUES (
+                ?,
+                ?,
+                ?,
+                ?,
+                ?,
+                ?,
+                ?,
+                ?,
+                ?,
+                ?,
+                ?,
+                ?,
+                ?,
+                ?,
+                'new',
+                0
+            )
+        `)
+        .bind(
+            data.form_source,
+            data.first_name,
+            data.last_name,
+            data.email,
+            data.phone || null,
+            data.interest || null,
+            data.timeline || null,
+            data.message || null,
+            data.property_address || null,
+            data.property_type || null,
+            data.selling_timeline || null,
+            data.bedrooms !== ""
+                ? Number(data.bedrooms)
+                : null,
+            data.bathrooms !== ""
+                ? Number(data.bathrooms)
+                : null,
+            data.notes || null
+        )
+        .run();
+
+
+    return result;
+
+}
+
+async function markInquiryEmailSent(
+    inquiryId,
+    env
+) {
+
+    await env.DB.prepare(`
+        UPDATE inquiries
+        SET email_sent = 1
+        WHERE id = ?
+    `)
+    .bind(
+        inquiryId
+    )
+    .run();
+
+}
+
 /* ======================================================
    WORKER
 ====================================================== */
@@ -833,6 +921,53 @@ export default {
 
             }
 
+            /* ======================================================
+            SAVE INQUIRY TO D1
+            ====================================================== */
+
+            let inquiryId;
+
+
+            try {
+
+                const saveResult =
+                    await saveInquiry(
+                        data,
+                        env
+                    );
+
+
+                inquiryId =
+                    saveResult.meta.last_row_id;
+
+
+            } catch (error) {
+
+                console.error(
+                    "Failed to save inquiry:",
+                    error
+                );
+
+
+                return new Response(
+                    JSON.stringify({
+                        success: false,
+                        message:
+                            "Unable to save your inquiry. Please try again."
+                    }),
+                    {
+                        status: 500,
+
+                        headers: {
+                            "Content-Type":
+                                "application/json; charset=UTF-8",
+
+                            ...getCorsHeaders(origin)
+                        }
+                    }
+                );
+
+            }
 
             /* ==================================================
                EMAIL CONFIGURATION
@@ -1068,6 +1203,21 @@ Contact Form
 
             }
 
+            try {
+
+                await markInquiryEmailSent(
+                    inquiryId,
+                    env
+                );
+
+            } catch (error) {
+
+                console.error(
+                    "Failed to update email_sent status:",
+                    error
+                );
+
+            }
 
             /* ==================================================
                SUCCESS
