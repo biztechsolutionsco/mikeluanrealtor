@@ -153,7 +153,14 @@ Contact Form
             ) {
 
                 console.error(
-                    "Brevo email configuration is missing."
+                    "Brevo email configuration is missing.",
+                    {
+                        hasBrevoApiKey:
+                            Boolean(env.BREVO_API_KEY),
+
+                        hasNotificationEmail:
+                            Boolean(env.INQUIRY_NOTIFICATION_EMAIL)
+                    }
                 );
 
 
