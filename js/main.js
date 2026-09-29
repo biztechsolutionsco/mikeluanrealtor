@@ -719,3 +719,59 @@ if (contactForm) {
 
     });
 }
+
+/* ======================================================
+   CLOUDFLARE TURNSTILE
+====================================================== */
+
+function renderTurnstileWidgets(root = document) {
+
+    if (
+        !window.turnstile
+    ) {
+        return;
+    }
+
+
+    const widgets =
+        root.querySelectorAll(
+            ".cf-turnstile:not([data-turnstile-rendered])"
+        );
+
+
+    widgets.forEach((widget) => {
+
+        window.turnstile.render(
+            widget,
+            {
+                sitekey:
+                    widget.dataset.sitekey,
+
+                action:
+                    widget.dataset.action
+            }
+        );
+
+
+        widget.setAttribute(
+            "data-turnstile-rendered",
+            "true"
+        );
+
+    });
+
+}
+
+
+window.renderTurnstileWidgets =
+    renderTurnstileWidgets;
+
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+        renderTurnstileWidgets();
+
+    }
+);
