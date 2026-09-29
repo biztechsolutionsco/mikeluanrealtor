@@ -108,9 +108,34 @@ export default {
                     formData.get("bathrooms"),
 
                 notes:
-                    formData.get("notes")
+                    formData.get("notes"),
+
+                website:
+                    formData.get("website")
             };
 
+            if (
+                data.website &&
+                String(data.website).trim()
+            ) {
+
+                return new Response(
+                    JSON.stringify({
+                        success: true
+                    }),
+                    {
+                        status: 200,
+
+                        headers: {
+                            "Content-Type":
+                                "application/json; charset=UTF-8",
+
+                            ...getCorsHeaders(origin)
+                        }
+                    }
+                );
+
+            }
 
             const senderEmail =
                 "biztechsolutionsco@gmail.com";

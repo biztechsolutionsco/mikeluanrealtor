@@ -1645,6 +1645,14 @@
     color: #a42323;
 }
 
+.form-honeypot {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
 /* ======================================================
    HOME EVALUATION FORM
 ====================================================== */
