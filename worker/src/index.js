@@ -1,7 +1,18 @@
-const ALLOWED_ORIGINS = new Set([
-    "https://biztechsolutionsco.github.io"
-]);
+const ALLOWED_ORIGINS =
+    new Set([
+        "https://biztechsolutionsco.github.io"
+    ]);
 
+
+const ALLOWED_TURNSTILE_HOSTNAMES =
+    new Set([
+        "biztechsolutionsco.github.io"
+    ]);
+
+
+/* ======================================================
+   CORS
+====================================================== */
 
 function getCorsHeaders(origin) {
 
@@ -12,15 +23,124 @@ function getCorsHeaders(origin) {
         return {};
     }
 
+
     return {
-        "Access-Control-Allow-Origin": origin,
-        "Access-Control-Allow-Methods": "POST, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type",
-        "Access-Control-Max-Age": "86400",
-        "Vary": "Origin"
+        "Access-Control-Allow-Origin":
+            origin,
+
+        "Access-Control-Allow-Methods":
+            "POST, OPTIONS",
+
+        "Access-Control-Allow-Headers":
+            "Content-Type",
+
+        "Access-Control-Max-Age":
+            "86400",
+
+        "Vary":
+            "Origin"
     };
 
 }
+
+
+/* ======================================================
+   TURNSTILE VERIFICATION
+====================================================== */
+
+async function verifyTurnstile(
+    token,
+    request,
+    env
+) {
+
+    if (
+        !env.TURNSTILE_SECRET_KEY
+    ) {
+
+        console.error(
+            "TURNSTILE_SECRET_KEY is not configured."
+        );
+
+
+        return {
+            success: false
+        };
+
+    }
+
+
+    const remoteIp =
+        request.headers.get(
+            "CF-Connecting-IP"
+        ) || "";
+
+
+    try {
+
+        const response =
+            await fetch(
+                "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify({
+                            secret:
+                                env.TURNSTILE_SECRET_KEY,
+
+                            response:
+                                token,
+
+                            remoteip:
+                                remoteIp
+                        })
+                }
+            );
+
+
+        if (!response.ok) {
+
+            console.error(
+                "Turnstile Siteverify returned:",
+                response.status
+            );
+
+
+            return {
+                success: false
+            };
+
+        }
+
+
+        return await response.json();
+
+    } catch (error) {
+
+        console.error(
+            "Turnstile verification failed:",
+            error
+        );
+
+
+        return {
+            success: false
+        };
+
+    }
+
+}
+
+
+/* ======================================================
+   WORKER
+====================================================== */
 
 export default {
 
@@ -29,6 +149,10 @@ export default {
         const origin =
             request.headers.get("Origin") || "";
 
+
+        /* ==================================================
+           CORS ORIGIN CHECK
+        ================================================== */
 
         if (
             origin &&
@@ -45,6 +169,10 @@ export default {
         }
 
 
+        /* ==================================================
+           PREFLIGHT
+        ================================================== */
+
         if (
             request.method === "OPTIONS"
         ) {
@@ -53,6 +181,7 @@ export default {
                 null,
                 {
                     status: 204,
+
                     headers:
                         getCorsHeaders(origin)
                 }
@@ -60,7 +189,14 @@ export default {
 
         }
 
-        if (request.method === "POST") {
+
+        /* ==================================================
+           FORM POST
+        ================================================== */
+
+        if (
+            request.method === "POST"
+        ) {
 
             const formData =
                 await request.formData();
@@ -111,12 +247,24 @@ export default {
                     formData.get("notes"),
 
                 website:
-                    formData.get("website")
+                    formData.get("website"),
+
+                turnstile_token:
+                    formData.get(
+                        "cf-turnstile-response"
+                    )
             };
+
+
+            /* ==================================================
+               HONEYPOT
+            ================================================== */
 
             if (
                 data.website &&
-                String(data.website).trim()
+                String(
+                    data.website
+                ).trim()
             ) {
 
                 return new Response(
@@ -137,6 +285,154 @@ export default {
 
             }
 
+
+            /* ==================================================
+               TURNSTILE TOKEN REQUIRED
+            ================================================== */
+
+            if (
+                !data.turnstile_token
+            ) {
+
+                return new Response(
+                    JSON.stringify({
+                        success: false,
+
+                        message:
+                            "Please complete the security verification."
+                    }),
+                    {
+                        status: 400,
+
+                        headers: {
+                            "Content-Type":
+                                "application/json; charset=UTF-8",
+
+                            ...getCorsHeaders(origin)
+                        }
+                    }
+                );
+
+            }
+
+
+            /* ==================================================
+               VERIFY TURNSTILE
+            ================================================== */
+
+            const turnstileResult =
+                await verifyTurnstile(
+                    data.turnstile_token,
+                    request,
+                    env
+                );
+
+
+            if (
+                !turnstileResult.success
+            ) {
+
+                return new Response(
+                    JSON.stringify({
+                        success: false,
+
+                        message:
+                            "Security verification failed. Please refresh the page and try again."
+                    }),
+                    {
+                        status: 403,
+
+                        headers: {
+                            "Content-Type":
+                                "application/json; charset=UTF-8",
+
+                            ...getCorsHeaders(origin)
+                        }
+                    }
+                );
+
+            }
+
+
+            /* ==================================================
+               TURNSTILE ACTION CHECK
+            ================================================== */
+
+            if (
+                turnstileResult.action !==
+                "contact_form"
+            ) {
+
+                console.error(
+                    "Unexpected Turnstile action:",
+                    turnstileResult.action
+                );
+
+
+                return new Response(
+                    JSON.stringify({
+                        success: false,
+
+                        message:
+                            "Security verification failed. Please refresh the page and try again."
+                    }),
+                    {
+                        status: 403,
+
+                        headers: {
+                            "Content-Type":
+                                "application/json; charset=UTF-8",
+
+                            ...getCorsHeaders(origin)
+                        }
+                    }
+                );
+
+            }
+
+
+            /* ==================================================
+               TURNSTILE HOSTNAME CHECK
+            ================================================== */
+
+            if (
+                !ALLOWED_TURNSTILE_HOSTNAMES.has(
+                    turnstileResult.hostname
+                )
+            ) {
+
+                console.error(
+                    "Unexpected Turnstile hostname:",
+                    turnstileResult.hostname
+                );
+
+
+                return new Response(
+                    JSON.stringify({
+                        success: false,
+
+                        message:
+                            "Security verification failed. Please refresh the page and try again."
+                    }),
+                    {
+                        status: 403,
+
+                        headers: {
+                            "Content-Type":
+                                "application/json; charset=UTF-8",
+
+                            ...getCorsHeaders(origin)
+                        }
+                    }
+                );
+
+            }
+
+
+            /* ==================================================
+               EMAIL CONFIGURATION
+            ================================================== */
+
             const senderEmail =
                 "biztechsolutionsco@gmail.com";
 
@@ -152,6 +448,10 @@ export default {
             let subject;
             let body;
 
+
+            /* ==================================================
+               HOME EVALUATION EMAIL
+            ================================================== */
 
             if (
                 data.form_source ===
@@ -198,6 +498,10 @@ Home Evaluation Form
 
             } else {
 
+                /* ==============================================
+                   CONTACT EMAIL
+                ============================================== */
+
                 subject =
                     `New Website Contact Inquiry - ${fullName}`;
 
@@ -230,6 +534,10 @@ Contact Form
             }
 
 
+            /* ==================================================
+               BREVO CONFIG CHECK
+            ================================================== */
+
             if (
                 !env.BREVO_API_KEY ||
                 !recipientEmail
@@ -243,6 +551,7 @@ Contact Form
                 return new Response(
                     JSON.stringify({
                         success: false,
+
                         message:
                             "Email configuration is missing."
                     }),
@@ -260,6 +569,10 @@ Contact Form
 
             }
 
+
+            /* ==================================================
+               SEND EMAIL THROUGH BREVO
+            ================================================== */
 
             const brevoResponse =
                 await fetch(
@@ -314,7 +627,9 @@ Contact Form
                 );
 
 
-            if (!brevoResponse.ok) {
+            if (
+                !brevoResponse.ok
+            ) {
 
                 const errorBody =
                     await brevoResponse.text();
@@ -330,6 +645,7 @@ Contact Form
                 return new Response(
                     JSON.stringify({
                         success: false,
+
                         message:
                             "Unable to send notification email."
                     }),
@@ -347,6 +663,10 @@ Contact Form
 
             }
 
+
+            /* ==================================================
+               SUCCESS
+            ================================================== */
 
             return new Response(
                 JSON.stringify({
@@ -366,6 +686,10 @@ Contact Form
 
         }
 
+
+        /* ==================================================
+           HEALTH CHECK
+        ================================================== */
 
         return new Response(
             "Mike Luan form worker is running.",
