@@ -77,6 +77,15 @@ async function loadHomeEvaluationForm() {
                     formMessage.classList.remove("is-error");
                     formMessage.classList.add("is-success");
                     form.reset();
+                    if (
+                        window.resetTurnstileWidget
+                    ) {
+
+                        window.resetTurnstileWidget(
+                            form
+                        );
+
+                    }
                 } catch (error) {
                     console.error(
                         "Home evaluation submission error:",
@@ -87,6 +96,15 @@ async function loadHomeEvaluationForm() {
                         "Something went wrong. Please try again.";
                     formMessage.classList.remove("is-success");
                     formMessage.classList.add("is-error");
+                    if (
+                        window.resetTurnstileWidget
+                    ) {
+
+                        window.resetTurnstileWidget(
+                            form
+                        );
+
+                    }
                 }
             });
         });

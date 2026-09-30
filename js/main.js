@@ -710,6 +710,10 @@ if (contactForm) {
 
             contactForm.reset();
 
+            resetTurnstileWidget(
+                contactForm
+            );
+
         } catch (error) {
 
             console.error(
@@ -722,6 +726,9 @@ if (contactForm) {
                 "Something went wrong. Please try again.";
             formMessage.classList.remove("is-success");
             formMessage.classList.add("is-error");
+            resetTurnstileWidget(
+                contactForm
+            );
         }
 
     });
@@ -733,11 +740,7 @@ if (contactForm) {
 
 function renderTurnstileWidgets(root = document) {
 
-    if (
-        !window.turnstile
-    ) {
-        return;
-    }
+    if (!window.turnstile) return;
 
 
     const widgets =
@@ -748,16 +751,21 @@ function renderTurnstileWidgets(root = document) {
 
     widgets.forEach((widget) => {
 
-        window.turnstile.render(
-            widget,
-            {
-                sitekey:
-                    widget.dataset.sitekey,
+        const widgetId =
+            window.turnstile.render(
+                widget,
+                {
+                    sitekey:
+                        widget.dataset.sitekey,
 
-                action:
-                    widget.dataset.action
-            }
-        );
+                    action:
+                        widget.dataset.action
+                }
+            );
+
+
+        widget.dataset.turnstileWidgetId =
+            widgetId;
 
 
         widget.setAttribute(
@@ -769,9 +777,38 @@ function renderTurnstileWidgets(root = document) {
 
 }
 
+function resetTurnstileWidget(root = document) {
+
+    if (!window.turnstile) return;
+
+
+    const widget =
+        root.querySelector(
+            ".cf-turnstile[data-turnstile-widget-id]"
+        );
+
+
+    if (!widget) return;
+
+
+    const widgetId =
+        widget.dataset.turnstileWidgetId;
+
+
+    if (!widgetId) return;
+
+
+    window.turnstile.reset(
+        widgetId
+    );
+
+}
 
 window.renderTurnstileWidgets =
     renderTurnstileWidgets;
+
+window.resetTurnstileWidget =
+    resetTurnstileWidget;
 
 
 document.addEventListener(
