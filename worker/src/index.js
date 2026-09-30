@@ -1184,13 +1184,11 @@ Contact Form
 
                 return new Response(
                     JSON.stringify({
-                        success: false,
-
-                        message:
-                            "Unable to send notification email."
+                        success: true,
+                        email_sent: false
                     }),
                     {
-                        status: 500,
+                        status: 200,
 
                         headers: {
                             "Content-Type":
