@@ -1090,13 +1090,11 @@ Contact Form
 
                 return new Response(
                     JSON.stringify({
-                        success: false,
-
-                        message:
-                            "Email configuration is missing."
+                        success: true,
+                        email_sent: false
                     }),
                     {
-                        status: 500,
+                        status: 200,
 
                         headers: {
                             "Content-Type":
@@ -1114,57 +1112,89 @@ Contact Form
                SEND EMAIL THROUGH BREVO
             ================================================== */
 
-            const brevoResponse =
-                await fetch(
-                    "https://api.brevo.com/v3/smtp/email",
+            let brevoResponse;
+
+            try {
+
+                brevoResponse =
+                    await fetch(
+                        "https://api.brevo.com/v3/smtp/email",
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "accept":
+                                    "application/json",
+
+                                "api-key":
+                                    env.BREVO_API_KEY,
+
+                                "content-type":
+                                    "application/json"
+                            },
+
+                            body:
+                                JSON.stringify({
+
+                                    sender: {
+                                        name:
+                                            "Mike Luan Website",
+
+                                        email:
+                                            senderEmail
+                                    },
+
+                                    to: [
+                                        {
+                                            email:
+                                                recipientEmail
+                                        }
+                                    ],
+
+                                    replyTo: {
+                                        email:
+                                            data.email,
+
+                                        name:
+                                            fullName
+                                    },
+
+                                    subject:
+                                        subject,
+
+                                    textContent:
+                                        body
+
+                                })
+                        }
+                    );
+
+            } catch (error) {
+
+                console.error(
+                    "Brevo request failed:",
+                    error
+                );
+
+
+                return new Response(
+                    JSON.stringify({
+                        success: true,
+                        email_sent: false
+                    }),
                     {
-                        method: "POST",
+                        status: 200,
 
                         headers: {
-                            "accept":
-                                "application/json",
+                            "Content-Type":
+                                "application/json; charset=UTF-8",
 
-                            "api-key":
-                                env.BREVO_API_KEY,
-
-                            "content-type":
-                                "application/json"
-                        },
-
-                        body:
-                            JSON.stringify({
-
-                                sender: {
-                                    name:
-                                        "Mike Luan Website",
-
-                                    email:
-                                        senderEmail
-                                },
-
-                                to: [
-                                    {
-                                        email:
-                                            recipientEmail
-                                    }
-                                ],
-
-                                replyTo: {
-                                    email:
-                                        data.email,
-
-                                    name:
-                                        fullName
-                                },
-
-                                subject:
-                                    subject,
-
-                                textContent:
-                                    body
-                            })
+                            ...getCorsHeaders(origin)
+                        }
                     }
                 );
+
+            }
 
 
             if (
