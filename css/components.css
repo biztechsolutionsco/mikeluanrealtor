@@ -1,4 +1,32 @@
 /* ======================================================
+   SKIP LINK
+====================================================== */
+
+.skip-link {
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    z-index: 2000;
+
+    padding: 10px 14px;
+
+    background: #111;
+    color: #fff;
+
+    text-decoration: none;
+
+    transform: translateY(-200%);
+}
+
+.skip-link:focus {
+    transform: translateY(0);
+}
+
+#main-content {
+    scroll-margin-top: 110px;
+}
+
+/* ======================================================
    SITE HEADER
 ====================================================== */
 
@@ -141,9 +169,11 @@
     text-decoration: none;
 }
 
+.realtor-brand:focus-visible,
 .desktop-nav a:focus-visible,
 .nav-dropdown-trigger:focus-visible,
 .mobile-menu-toggle:focus-visible,
+.mobile-nav a:focus-visible,
 .mobile-nav-dropdown-trigger:focus-visible {
     outline: 2px solid #222;
     outline-offset: 4px;
@@ -243,8 +273,8 @@
     color: #111;
 }
 
-.nav-dropdown:hover .nav-dropdown-menu,
-.nav-dropdown:focus-within .nav-dropdown-menu {
+.nav-dropdown-trigger[aria-expanded="true"]
++ .nav-dropdown-menu {
     opacity: 1;
     visibility: visible;
 
@@ -253,8 +283,8 @@
         translateY(0);
 }
 
-.nav-dropdown:hover .nav-dropdown-arrow,
-.nav-dropdown:focus-within .nav-dropdown-arrow {
+.nav-dropdown-trigger[aria-expanded="true"]
+.nav-dropdown-arrow {
     transform: rotate(180deg);
 }
 
@@ -565,8 +595,17 @@
 }
 
 .footer-links a:hover,
-.footer-contact a:hover {
+.footer-contact a:hover,
+.footer-links a:focus-visible,
+.footer-contact a:focus-visible {
     color: #fff;
+}
+
+.footer-links a:focus-visible,
+.footer-contact a:focus-visible,
+.footer-legal-links a:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 4px;
 }
 
 /* ======================================================
@@ -613,10 +652,10 @@
     transition: color 0.2s ease;
 }
 
-.footer-legal-links a:hover {
+.footer-legal-links a:hover,
+.footer-legal-links a:focus-visible {
     color: #fff;
 }
-
 
 /* ======================================================
    FOOTER RESPONSIVE

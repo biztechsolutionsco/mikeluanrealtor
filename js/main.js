@@ -181,6 +181,102 @@ async function loadComponent(
 
 }
 
+/* ======================================================
+   DESKTOP COMMUNITIES DROPDOWN
+====================================================== */
+
+function initializeDesktopCommunityDropdown() {
+
+    const dropdown =
+        document.querySelector(
+            ".nav-dropdown"
+        );
+
+    const trigger =
+        document.querySelector(
+            ".nav-dropdown-trigger"
+        );
+
+    if (!dropdown || !trigger) {
+        return;
+    }
+
+    function setExpanded(isExpanded) {
+
+        trigger.setAttribute(
+            "aria-expanded",
+            String(isExpanded)
+        );
+
+    }
+
+
+    /* ------------------------------------------------------
+       MOUSE
+    ------------------------------------------------------ */
+
+    dropdown.addEventListener(
+        "mouseenter",
+        () => {
+            setExpanded(true);
+        }
+    );
+
+    dropdown.addEventListener(
+        "mouseleave",
+        () => {
+            setExpanded(false);
+        }
+    );
+
+
+    /* ------------------------------------------------------
+       KEYBOARD FOCUS
+    ------------------------------------------------------ */
+
+    dropdown.addEventListener(
+        "focusin",
+        () => {
+            setExpanded(true);
+        }
+    );
+
+    dropdown.addEventListener(
+        "focusout",
+        (event) => {
+
+            if (
+                !dropdown.contains(
+                    event.relatedTarget
+                )
+            ) {
+                setExpanded(false);
+            }
+
+        }
+    );
+
+
+    /* ------------------------------------------------------
+       ESCAPE KEY
+    ------------------------------------------------------ */
+
+    dropdown.addEventListener(
+        "keydown",
+        (event) => {
+
+            if (event.key !== "Escape") {
+                return;
+            }
+
+            setExpanded(false);
+
+            trigger.focus();
+
+        }
+    );
+
+}
 
 /* ======================================================
    MOBILE NAVIGATION
@@ -456,6 +552,11 @@ function initializeActiveNavigation() {
                     "is-active"
                 );
 
+                link.setAttribute(
+                    "aria-current",
+                    "page"
+                );
+
             }
 
         });
@@ -650,6 +751,23 @@ document.addEventListener(
             Initialize behavior after shared
             components are present.
         */
+
+        const mainContent =
+            document.querySelector("main");
+
+        if (mainContent) {
+
+            mainContent.id =
+                "main-content";
+
+            mainContent.setAttribute(
+                "tabindex",
+                "-1"
+            );
+
+        }
+
+        initializeDesktopCommunityDropdown();
 
         initializeMobileNavigation();
 

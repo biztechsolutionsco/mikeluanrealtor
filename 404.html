@@ -3,6 +3,23 @@
 
 <head>
 
+    <script>
+        const errorPageBase =
+            window.location.hostname.endsWith("github.io")
+                ? "/mikeluanrealtor/"
+                : "/";
+
+        const baseElement =
+            document.createElement("base");
+
+        baseElement.href =
+            errorPageBase;
+
+        document.head.appendChild(
+            baseElement
+        );
+    </script>
+
     <meta charset="UTF-8">
 
     <meta
